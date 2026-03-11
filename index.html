@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Prime Panel Limited — HR Accounts</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET & ROOT
+============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --ink:     #0a0f14;
+  --ink2:    #111820;
+  --ink3:    #18232e;
+  --card:    #1a2535;
+  --border:  rgba(255,184,0,0.14);
+  --amber:   #ffb800;
+  --amber2:  #ffd566;
+  --cream:   #f0ead8;
+  --muted:   #7a8a9a;
+  --green:   #3ecf82;
+  --red:     #f05c5c;
+  --blue:    #5b9cf6;
+  --purple:  #a78bfa;
+  --sidebar-w: 250px;
+  --topbar-h: 60px;
+}
+
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--ink);
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   MOBILE HAMBURGER OVERLAY
+============================================================ */
+.overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 199;
+  backdrop-filter: blur(2px);
+}
+.overlay.open { display: block; }
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--ink2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 200;
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+}
+.logo-wrap {
+  padding: 22px 20px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.logo-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+  color: var(--amber);
+  line-height: 1;
+}
+.logo-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.nav { flex: 1; padding: 14px 10px; overflow-y: auto; }
+.nav-section {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 12px 10px 5px;
+  opacity: 0.6;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: all 0.15s;
+  margin-bottom: 1px;
+  border: 1px solid transparent;
+  user-select: none;
+}
+.nav-item:hover { color: var(--cream); background: rgba(255,184,0,0.06); }
+.nav-item.active {
+  color: var(--amber);
+  background: rgba(255,184,0,0.1);
+  border-color: var(--border);
+}
+.nav-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+.nav-count {
+  margin-left: auto;
+  background: rgba(255,184,0,0.15);
+  color: var(--amber);
+  font-size: 0.6rem;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 1px 6px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.sidebar-foot {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  font-size: 0.68rem;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ============================================================
+   TOPBAR
+============================================================ */
+.topbar {
+  position: fixed;
+  top: 0; left: var(--sidebar-w); right: 0;
+  height: var(--topbar-h);
+  background: var(--ink);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  z-index: 100;
+}
+.hamburger {
+  display: none;
+  background: none; border: none;
+  cursor: pointer; color: var(--cream);
+  padding: 6px; margin-right: 10px;
+}
+.hamburger svg { width: 22px; height: 22px; }
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.page-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.06em;
+  color: var(--cream);
+}
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.date-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted);
+  padding: 4px 10px;
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: 'Sora', sans-serif;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-amber { background: var(--amber); color: var(--ink); }
+.btn-amber:hover { background: var(--amber2); transform: translateY(-1px); }
+.btn-ghost { background: transparent; color: var(--amber); border: 1px solid var(--border); }
+.btn-ghost:hover { background: rgba(255,184,0,0.08); }
+.btn-danger { background: rgba(240,92,92,0.12); color: var(--red); border: 1px solid rgba(240,92,92,0.2); }
+.btn-danger:hover { background: rgba(240,92,92,0.22); }
+.btn-sm { padding: 5px 11px; font-size: 0.71rem; }
+.btn-xs { padding: 3px 8px; font-size: 0.66rem; }
+
+/* ============================================================
+   MAIN CONTENT
+============================================================ */
+.main {
+  margin-left: var(--sidebar-w);
+  padding-top: var(--topbar-h);
+  min-height: 100vh;
+}
+.content { padding: 26px 28px; }
+
+/* ============================================================
+   VIEWS
+============================================================ */
+.view { display: none; animation: fadeIn 0.2s ease; }
+.view.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ============================================================
+   STATS GRID
+============================================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--amber), transparent);
+}
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.stat-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.9rem;
+  letter-spacing: 0.04em;
+  color: var(--cream);
+  line-height: 1;
+}
+.stat-val.amber { color: var(--amber); }
+.stat-val.green { color: var(--green); }
+.stat-val.red { color: var(--red); }
+.stat-val.blue { color: var(--blue); }
+.stat-sub { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
+
+/* ============================================================
+   TABLE
+============================================================ */
+.table-wrap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.table-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.table-ttl {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  color: var(--cream);
+}
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 560px; }
+thead tr { background: rgba(255,184,0,0.04); }
+th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+td {
+  padding: 11px 18px;
+  font-size: 0.8rem;
+  border-bottom: 1px solid rgba(255,184,0,0.05);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,184,0,0.03); }
+
+/* ============================================================
+   BADGES
+============================================================ */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.bg-green  { background: rgba(62,207,130,0.13); color: var(--green); }
+.bg-red    { background: rgba(240,92,92,0.13); color: var(--red); }
+.bg-amber  { background: rgba(255,184,0,0.13); color: var(--amber); }
+.bg-blue   { background: rgba(91,156,246,0.13); color: var(--blue); }
+.bg-purple { background: rgba(167,139,250,0.13); color: var(--purple); }
+.bg-muted  { background: rgba(122,138,154,0.13); color: var(--muted); }
+
+/* category colour map */
+.cat-director    { background: rgba(255,184,0,0.15); color: var(--amber); }
+.cat-supervisor  { background: rgba(91,156,246,0.15); color: var(--blue); }
+.cat-operator    { background: rgba(62,207,130,0.15); color: var(--green); }
+.cat-employee    { background: rgba(167,139,250,0.15); color: var(--purple); }
+.cat-casual      { background: rgba(122,138,154,0.15); color: #b0bec5; }
+
+/* ============================================================
+   AVATAR
+============================================================ */
+.avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--amber) 0%, #8a5800 100%);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 700;
+  color: var(--ink);
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.emp-cell { display: flex; align-items: center; gap: 9px; }
+.emp-name { font-weight: 600; color: var(--cream); font-size: 0.82rem; }
+.emp-sub  { font-size: 0.68rem; color: var(--muted); }
+
+/* ============================================================
+   SEARCH INPUT
+============================================================ */
+.search {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 13px;
+  color: var(--cream);
+  font-size: 0.78rem;
+  font-family: 'Sora', sans-serif;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 200px;
+}
+.search:focus { border-color: var(--amber); }
+.search::placeholder { color: var(--muted); }
+
+/* ============================================================
+   MODAL
+============================================================ */
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(5px);
+  z-index: 999;
+  display: none; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  width: 520px; max-width: 100%;
+  max-height: 92vh; overflow-y: auto;
+  padding: 26px;
+  animation: modalPop 0.22s ease;
+}
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-ttl {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.06em;
+  color: var(--amber);
+  margin-bottom: 18px;
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+.form-group { margin-bottom: 14px; }
+.form-group label {
+  display: block;
+  font-size: 0.65rem; font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); margin-bottom: 5px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  background: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--cream);
+  font-size: 0.8rem;
+  font-family: 'Sora', sans-serif;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.form-group input:focus,
+.form-group select:focus { border-color: var(--amber); }
+.form-group select option { background: var(--ink2); }
+.modal-foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
+
+/* ============================================================
+   DETAIL VIEW
+============================================================ */
+.detail-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
+.profile-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+  position: sticky; top: calc(var(--topbar-h) + 20px);
+}
+.profile-avatar {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--amber), #8a5800);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; font-weight: 700;
+  color: var(--ink);
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+}
+.profile-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem; letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+.profile-role { font-size: 0.74rem; color: var(--muted); margin-bottom: 14px; }
+.info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,184,0,0.05);
+  font-size: 0.76rem;
+}
+.info-row:last-child { border-bottom: none; }
+.info-key { color: var(--muted); }
+.info-val { font-weight: 500; font-size: 0.78rem; }
+.summary-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 14px;
+}
+.sum-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 10px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.74rem; color: var(--muted);
+  cursor: pointer; margin-bottom: 18px;
+  transition: color 0.15s;
+}
+.back-btn:hover { color: var(--amber); }
+
+/* ============================================================
+   TABS
+============================================================ */
+.tabs { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+.tab {
+  padding: 6px 14px;
+  border-radius: 7px;
+  font-size: 0.76rem; font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.tab:hover { color: var(--cream); }
+.tab.active { background: rgba(255,184,0,0.1); border-color: var(--border); color: var(--amber); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ============================================================
+   EMPTY STATE
+============================================================ */
+.empty {
+  text-align: center; padding: 40px 20px;
+  color: var(--muted); font-size: 0.8rem;
+}
+
+/* ============================================================
+   TOAST
+============================================================ */
+.toast {
+  position: fixed; bottom: 20px; right: 20px;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-size: 0.8rem; font-weight: 600;
+  z-index: 9999; display: none;
+  animation: slideUp 0.25s ease;
+  max-width: 280px;
+}
+.toast.ok  { background: var(--green); color: #fff; }
+.toast.err { background: var(--red); color: #fff; }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   FILTER ROW
+============================================================ */
+.filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.filter-select {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 11px;
+  color: var(--cream);
+  font-size: 0.76rem;
+  font-family: 'Sora', sans-serif;
+  outline: none;
+  cursor: pointer;
+}
+.filter-select:focus { border-color: var(--amber); }
+.filter-select option { background: var(--ink2); }
+
+/* ============================================================
+   RESPONSIVE — TABLET (≤900px)
+============================================================ */
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .detail-layout { grid-template-columns: 1fr; }
+  .profile-card { position: static; }
+}
+
+/* ============================================================
+   RESPONSIVE — MOBILE (≤650px)
+============================================================ */
+@media (max-width: 650px) {
+  :root { --sidebar-w: 250px; }
+
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: 6px 0 30px rgba(0,0,0,0.5);
+  }
+  .hamburger { display: flex; }
+
+  .topbar { left: 0; padding: 0 16px; }
+  .main   { margin-left: 0; }
+  .content { padding: 16px; }
+
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-val { font-size: 1.4rem; }
+
+  .table-head { padding: 12px 14px; }
+  th, td { padding: 9px 12px; }
+
+  .form-grid { grid-template-columns: 1fr; }
+  .modal { padding: 18px; }
+
+  .search { width: 140px; }
+  .date-chip { display: none; }
+
+  .btn { padding: 7px 12px; font-size: 0.74rem; }
+
+  .tabs { gap: 3px; }
+  .tab { padding: 5px 10px; font-size: 0.71rem; }
+}
+
+/* ============================================================
+   SCROLLBAR STYLING
+============================================================ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: rgba(255,184,0,0.25); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,184,0,0.4); }
+</style>
+</head>
+<body>
+
+<!-- Mobile overlay -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ============================================================
+     SIDEBAR
+============================================================ -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo-wrap">
+    <div class="logo-name">Prime Panel Ltd</div>
+    <div class="logo-tag">Employee Accounts System</div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" id="nav-dashboard" onclick="showView('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+
+    <div class="nav-section">Employees</div>
+    <div class="nav-item" id="nav-employees" onclick="showView('employees')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
+      All Employees
+      <span class="nav-count" id="nc-emp">0</span>
+    </div>
+
+    <div class="nav-section">Accounts</div>
+    <div class="nav-item" id="nav-salaries" onclick="showView('salaries')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Salaries
+      <span class="nav-count" id="nc-sal">0</span>
+    </div>
+    <div class="nav-item" id="nav-advances" onclick="showView('advances')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      Advances
+      <span class="nav-count" id="nc-adv">0</span>
+    </div>
+    <div class="nav-item" id="nav-loans" onclick="showView('loans')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      Loans
+      <span class="nav-count" id="nc-loan">0</span>
+    </div>
+    <div class="nav-item" id="nav-transactions" onclick="showView('transactions')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      All Transactions
+    </div>
+  </nav>
+
+  <div class="sidebar-foot">v2.0 · Prime Panel Ltd</div>
+</aside>
+
+<!-- ============================================================
+     TOPBAR
+============================================================ -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="page-title" id="pageTitle">Dashboard</div>
+  </div>
+  <div class="topbar-right">
+    <div class="date-chip" id="dateChip"></div>
+    <button class="btn btn-amber" id="mainBtn" onclick="mainBtnClick()">+ Add Employee</button>
+  </div>
+</header>
+
+<!-- ============================================================
+     MAIN CONTENT
+============================================================ -->
+<main class="main">
+<div class="content">
+
+  <!-- =================== DASHBOARD =================== -->
+  <div class="view active" id="view-dashboard">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Total Employees</div><div class="stat-val amber" id="s-total">0</div><div class="stat-sub">All categories</div></div>
+      <div class="stat-card"><div class="stat-label">Monthly Payroll</div><div class="stat-val" id="s-payroll">0</div><div class="stat-sub">KES · this month</div></div>
+      <div class="stat-card"><div class="stat-label">Outstanding Loans</div><div class="stat-val red" id="s-loans">0</div><div class="stat-sub">KES · pending</div></div>
+      <div class="stat-card"><div class="stat-label">Total Advances</div><div class="stat-val blue" id="s-adv">0</div><div class="stat-sub">KES · all time</div></div>
+    </div>
+
+    <!-- Category breakdown -->
+    <div class="stats-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:24px">
+      <div class="stat-card"><div class="stat-label">Directors</div><div class="stat-val amber" id="s-dir">0</div></div>
+      <div class="stat-card"><div class="stat-label">Supervisors</div><div class="stat-val blue" id="s-sup">0</div></div>
+      <div class="stat-card"><div class="stat-label">Operators</div><div class="stat-val green" id="s-ope">0</div></div>
+      <div class="stat-card"><div class="stat-label">Employees</div><div class="stat-val" style="color:var(--purple)" id="s-emp">0</div></div>
+      <div class="stat-card"><div class="stat-label">Casual Labour</div><div class="stat-val" style="color:var(--muted)" id="s-cas">0</div></div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-head"><div class="table-ttl">Recent Transactions</div></div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Employee</th><th>Category</th><th>Type</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="dash-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- =================== EMPLOYEES =================== -->
+  <div class="view" id="view-employees">
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="table-ttl">Employee Registry</div>
+        <div class="filter-row">
+          <input class="search" placeholder="Search…" oninput="filterEmp(this.value)" id="emp-search">
+          <select class="filter-select" onchange="filterEmp(document.getElementById('emp-search').value)" id="emp-cat-filter">
+            <option value="">All Categories</option>
+            <option value="Director">Director</option>
+            <option value="Supervisor">Supervisor</option>
+            <option value="Operator">Operator</option>
+            <option value="Employee">Employee</option>
+            <option value="Casual Labourer">Casual Labourer</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Name</th><th>Category</th><th>Department</th><th>Salary</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="emp-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- =================== EMPLOYEE DETAIL =================== -->
+  <div class="view" id="view-emp-detail">
+    <div class="back-btn" onclick="showView('employees')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Employees
+    </div>
+    <div class="detail-layout">
+      <div>
+        <div class="profile-card">
+          <div class="profile-avatar" id="det-avatar"></div>
+          <div class="profile-name" id="det-name"></div>
+          <div class="profile-role" id="det-role"></div>
+          <div id="det-info"></div>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" onclick="editCurrent()">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCurrent()">Remove</button>
+          </div>
+        </div>
+        <div class="summary-card">
+          <div class="sum-label">Account Summary</div>
+          <div class="info-row"><span class="info-key">Salary Paid (total)</span><span class="info-val green" id="sum-sal">KES 0</span></div>
+          <div class="info-row"><span class="info-key">Advances Taken</span><span class="info-val blue" id="sum-adv">KES 0</span></div>
+          <div class="info-row"><span class="info-key">Loan Balance</span><span class="info-val red" id="sum-loan">KES 0</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('dtab-salary')">Salary History</div>
+          <div class="tab" onclick="switchTab('dtab-advances')">Advances</div>
+          <div class="tab" onclick="switchTab('dtab-loans')">Loans</div>
+        </div>
+        <div class="tab-panel active" id="dtab-salary">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+            <button class="btn btn-amber btn-sm" onclick="openTxModal('salary', true)">+ Record Salary</button>
+          </div>
+          <div class="table-wrap"><div class="table-scroll"><table>
+            <thead><tr><th>Month</th><th>Amount</th><th>Paid On</th><th>Note</th><th></th></tr></thead>
+            <tbody id="det-sal-tbody"></tbody>
+          </table></div></div>
+        </div>
+        <div class="tab-panel" id="dtab-advances">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+            <button class="btn btn-amber btn-sm" onclick="openTxModal('advance', true)">+ Record Advance</button>
+          </div>
+          <div class="table-wrap"><div class="table-scroll"><table>
+            <thead><tr><th>Date</th><th>Amount</th><th>Reason</th><th>Status</th><th></th></tr></thead>
+            <tbody id="det-adv-tbody"></tbody>
+          </table></div></div>
+        </div>
+        <div class="tab-panel" id="dtab-loans">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+            <button class="btn btn-amber btn-sm" onclick="openTxModal('loan', true)">+ Add Loan</button>
+          </div>
+          <div class="table-wrap"><div class="table-scroll"><table>
+            <thead><tr><th>Date</th><th>Principal</th><th>Balance</th><th>Status</th><th></th></tr></thead>
+            <tbody id="det-loan-tbody"></tbody>
+          </table></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== SALARIES =================== -->
+  <div class="view" id="view-salaries">
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="table-ttl">Salary Records</div>
+        <div class="filter-row">
+          <input class="search" placeholder="Search…" oninput="renderSalaries(this.value)">
+          <button class="btn btn-amber btn-sm" onclick="openTxModal('salary', false)">+ Record Salary</button>
+        </div>
+      </div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Employee</th><th>Category</th><th>Month</th><th>Amount</th><th>Paid On</th><th>Note</th><th></th></tr></thead>
+        <tbody id="sal-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- =================== ADVANCES =================== -->
+  <div class="view" id="view-advances">
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="table-ttl">Advance Records</div>
+        <div class="filter-row">
+          <input class="search" placeholder="Search…" oninput="renderAdvances(this.value)">
+          <button class="btn btn-amber btn-sm" onclick="openTxModal('advance', false)">+ Record Advance</button>
+        </div>
+      </div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Employee</th><th>Category</th><th>Date</th><th>Amount</th><th>Reason</th><th>Status</th><th></th></tr></thead>
+        <tbody id="adv-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- =================== LOANS =================== -->
+  <div class="view" id="view-loans">
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="table-ttl">Loan Records</div>
+        <div class="filter-row">
+          <input class="search" placeholder="Search…" oninput="renderLoans(this.value)">
+          <button class="btn btn-amber btn-sm" onclick="openTxModal('loan', false)">+ Add Loan</button>
+        </div>
+      </div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Employee</th><th>Category</th><th>Date</th><th>Principal</th><th>Balance</th><th>Status</th><th></th></tr></thead>
+        <tbody id="loan-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- =================== ALL TRANSACTIONS =================== -->
+  <div class="view" id="view-transactions">
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="table-ttl">All Transactions</div>
+        <input class="search" placeholder="Search…" oninput="renderAllTx(this.value)">
+      </div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Employee</th><th>Category</th><th>Type</th><th>Amount</th><th>Date</th><th>Note</th><th>Status</th></tr></thead>
+        <tbody id="all-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+</main>
+
+<!-- ============================================================
+     EMPLOYEE MODAL
+============================================================ -->
+<div class="modal-bg" id="empModal">
+  <div class="modal">
+    <div class="modal-ttl" id="empModalTtl">Add Employee</div>
+    <div class="form-grid">
+      <div class="form-group"><label>First Name *</label><input id="f-fn" placeholder="John"></div>
+      <div class="form-group"><label>Last Name *</label><input id="f-ln" placeholder="Doe"></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Category *</label>
+        <select id="f-cat">
+          <option value="">— Select —</option>
+          <option value="Director">Director</option>
+          <option value="Supervisor">Supervisor</option>
+          <option value="Operator">Operator</option>
+          <option value="Employee">Employee</option>
+          <option value="Casual Labourer">Casual Labourer</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Department</label><input id="f-dept" placeholder="Production, HR, Finance…"></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Monthly Salary (KES) *</label><input id="f-sal" type="number" placeholder="50000"></div>
+      <div class="form-group"><label>Employment Date</label><input id="f-date" type="date"></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Phone</label><input id="f-phone" placeholder="+254 7xx xxx xxx"></div>
+      <div class="form-group"><label>Email</label><input id="f-email" placeholder="john@example.com"></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>National ID</label><input id="f-nid" placeholder="12345678"></div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="f-status">
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+          <option value="Suspended">Suspended</option>
+          <option value="Terminated">Terminated</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('empModal')">Cancel</button>
+      <button class="btn btn-amber" onclick="saveEmployee()">Save Employee</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TRANSACTION MODAL
+============================================================ -->
+<div class="modal-bg" id="txModal">
+  <div class="modal">
+    <div class="modal-ttl" id="txModalTtl">Record Transaction</div>
+    <div class="form-group" id="tx-emp-grp">
+      <label>Employee *</label>
+      <select id="f-tx-emp"></select>
+    </div>
+
+    <!-- SALARY -->
+    <div id="tx-salary">
+      <div class="form-grid">
+        <div class="form-group"><label>Month *</label><input id="f-sal-month" type="month"></div>
+        <div class="form-group"><label>Amount (KES) *</label><input id="f-sal-amt" type="number" placeholder="50000"></div>
+      </div>
+      <div class="form-group"><label>Note</label><input id="f-sal-note" placeholder="Optional note"></div>
+    </div>
+
+    <!-- ADVANCE -->
+    <div id="tx-advance" style="display:none">
+      <div class="form-grid">
+        <div class="form-group"><label>Amount (KES) *</label><input id="f-adv-amt" type="number" placeholder="20000"></div>
+        <div class="form-group"><label>Date *</label><input id="f-adv-date" type="date"></div>
+      </div>
+      <div class="form-group"><label>Reason</label><input id="f-adv-reason" placeholder="Medical, personal…"></div>
+      <div class="form-group"><label>Status</label>
+        <select id="f-adv-status"><option value="Pending">Pending</option><option value="Recovered">Recovered</option></select>
+      </div>
+    </div>
+
+    <!-- LOAN -->
+    <div id="tx-loan" style="display:none">
+      <div class="form-grid">
+        <div class="form-group"><label>Principal (KES) *</label><input id="f-loan-principal" type="number" placeholder="200000"></div>
+        <div class="form-group"><label>Balance (KES)</label><input id="f-loan-balance" type="number" placeholder="200000"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Date Issued *</label><input id="f-loan-date" type="date"></div>
+        <div class="form-group"><label>Status</label>
+          <select id="f-loan-status"><option value="Active">Active</option><option value="Paid">Paid</option><option value="Defaulted">Defaulted</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>Purpose / Note</label><input id="f-loan-note" placeholder="Purpose of loan"></div>
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('txModal')">Cancel</button>
+      <button class="btn btn-amber" onclick="saveTx()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+'use strict';
+
+/* ─── DB ─── */
+let DB = { employees: [], transactions: [] };
+let currentEmpId  = null;
+let editingEmpId  = null;
+let curTxType     = 'salary';
+let txEmpPreset   = null; // when opening tx from detail view
+let USE_SERVER    = false; // auto-detected
+
+const CATS = ['Director','Supervisor','Operator','Employee','Casual Labourer'];
+
+/* Detect if we are running on the Node server (not file://) */
+async function detectServer() {
+  if (location.protocol === 'file:') return false;
+  try {
+    const r = await fetch('/api/db', { method: 'GET', signal: AbortSignal.timeout(1500) });
+    return r.ok;
+  } catch { return false; }
+}
+
+async function loadDB() {
+  USE_SERVER = await detectServer();
+  if (USE_SERVER) {
+    try {
+      const r = await fetch('/api/db');
+      DB = await r.json();
+      showSyncBadge('🟢 Connected to shared database');
+    } catch (e) {
+      console.warn('Server load failed, using localStorage');
+      USE_SERVER = false;
+      loadLocalDB();
+    }
+  } else {
+    loadLocalDB();
+    showSyncBadge('🟡 Local storage (single device)');
+  }
+}
+
+function loadLocalDB() {
+  try { const s = localStorage.getItem('pp_db_v2'); if (s) DB = JSON.parse(s); } catch(e) {}
+}
+
+async function saveDB() {
+  /* Always save to localStorage as backup */
+  try { localStorage.setItem('pp_db_v2', JSON.stringify(DB)); } catch(e) {}
+
+  if (!USE_SERVER) return;
+  try {
+    const r = await fetch('/api/db', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(DB),
+    });
+    if (!r.ok) throw new Error('Save failed');
+  } catch (e) {
+    console.warn('Server save failed:', e.message);
+    toast('⚠️ Could not save to server — saved locally', true);
+  }
+}
+
+function showSyncBadge(msg) {
+  let badge = document.getElementById('syncBadge');
+  if (!badge) {
+    badge = document.createElement('div');
+    badge.id = 'syncBadge';
+    badge.style.cssText = 'position:fixed;bottom:20px;left:20px;font-family:JetBrains Mono,monospace;font-size:0.62rem;background:var(--card);border:1px solid var(--border);padding:5px 11px;border-radius:20px;color:var(--muted);z-index:500';
+    document.body.appendChild(badge);
+  }
+  badge.textContent = msg;
+}
+
+/* ─── FORMATTERS ─── */
+const fmt   = n => 'KES ' + Number(n||0).toLocaleString('en-KE');
+const ini   = e => ((e.fn||'')[0]||(e.fn||'')[0]||'?').toUpperCase() + ((e.ln||'')[0]||'').toUpperCase();
+const full  = e => (e.fn+' '+e.ln).trim();
+const today = () => new Date().toISOString().split('T')[0];
+const nowM  = () => new Date().toISOString().slice(0,7);
+const uid   = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+
+function catBadge(cat) {
+  const map = { 'Director':'cat-director','Supervisor':'cat-supervisor','Operator':'cat-operator','Employee':'cat-employee','Casual Labourer':'cat-casual' };
+  return `<span class="badge ${map[cat]||'bg-muted'}">${cat||'—'}</span>`;
+}
+function txBadge(type) {
+  const map = { salary:'bg-green', advance:'bg-blue', loan:'bg-red' };
+  return `<span class="badge ${map[type]||'bg-muted'}">${type.toUpperCase()}</span>`;
+}
+function statusBadge(s) {
+  if (['Paid','Recovered','Active'].includes(s)) return `<span class="badge ${s==='Active'?'bg-amber':'bg-green'}">${s}</span>`;
+  if (['Defaulted','Suspended','Terminated'].includes(s)) return `<span class="badge bg-red">${s}</span>`;
+  if (s === 'Pending') return `<span class="badge bg-blue">${s}</span>`;
+  return `<span class="badge bg-muted">${s||'—'}</span>`;
+}
+function empCell(e) {
+  if (!e) return '<td colspan="7"><em style="color:var(--muted)">Unknown</em></td>';
+  return `<div class="emp-cell"><div class="avatar">${ini(e)}</div><div><div class="emp-name">${full(e)}</div><div class="emp-sub">${e.dept||''}</div></div></div>`;
+}
+
+/* ─── SIDEBAR / MOBILE ─── */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+/* ─── NAVIGATION ─── */
+const viewMap = {
+  dashboard:    'Dashboard',
+  employees:    'All Employees',
+  'emp-detail': 'Employee Profile',
+  salaries:     'Salaries',
+  advances:     'Advances',
+  loans:        'Loans',
+  transactions: 'All Transactions',
+};
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  document.getElementById('view-'+id).classList.add('active');
+  document.getElementById('pageTitle').textContent = viewMap[id] || '';
+
+  const navId = { dashboard:'nav-dashboard', employees:'nav-employees', 'emp-detail':'nav-employees',
+    salaries:'nav-salaries', advances:'nav-advances', loans:'nav-loans', transactions:'nav-transactions' };
+  if (navId[id]) document.getElementById(navId[id]).classList.add('active');
+
+  const btn = document.getElementById('mainBtn');
+  const btnShow = ['dashboard','employees','emp-detail'].includes(id);
+  btn.style.display = btnShow ? '' : 'none';
+
+  closeSidebar();
+  renderView(id);
+}
+
+function renderView(id) {
+  if (id === 'dashboard')    renderDash();
+  if (id === 'employees')    renderEmployees();
+  if (id === 'emp-detail')   renderDetail(currentEmpId);
+  if (id === 'salaries')     renderSalaries();
+  if (id === 'advances')     renderAdvances();
+  if (id === 'loans')        renderLoans();
+  if (id === 'transactions') renderAllTx();
+}
+
+function mainBtnClick() { openEmpModal(); }
+function curView() { return document.querySelector('.view.active')?.id?.replace('view-',''); }
+
+/* ─── NAV COUNTS ─── */
+function updateCounts() {
+  document.getElementById('nc-emp').textContent  = DB.employees.length;
+  document.getElementById('nc-sal').textContent  = DB.transactions.filter(t=>t.type==='salary').length;
+  document.getElementById('nc-adv').textContent  = DB.transactions.filter(t=>t.type==='advance').length;
+  document.getElementById('nc-loan').textContent = DB.transactions.filter(t=>t.type==='loan').length;
+}
+
+/* ─── DASHBOARD ─── */
+function renderDash() {
+  updateCounts();
+  document.getElementById('s-total').textContent  = DB.employees.length;
+  const payroll = DB.employees.reduce((s,e)=>s+(Number(e.salary)||0),0);
+  document.getElementById('s-payroll').textContent = payroll.toLocaleString('en-KE');
+  const loanBal = DB.transactions.filter(t=>t.type==='loan'&&t.status!=='Paid').reduce((s,t)=>s+(Number(t.balance)||0),0);
+  document.getElementById('s-loans').textContent = loanBal.toLocaleString('en-KE');
+  const advTot = DB.transactions.filter(t=>t.type==='advance').reduce((s,t)=>s+(Number(t.amount)||0),0);
+  document.getElementById('s-adv').textContent = advTot.toLocaleString('en-KE');
+
+  CATS.forEach(c => {
+    const ids = { 'Director':'s-dir','Supervisor':'s-sup','Operator':'s-ope','Employee':'s-emp','Casual Labourer':'s-cas' };
+    document.getElementById(ids[c]).textContent = DB.employees.filter(e=>e.cat===c).length;
+  });
+
+  const rows = [...DB.transactions].reverse().slice(0,12);
+  const tbody = document.getElementById('dash-tbody');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty">No transactions yet. Add an employee and record their account activities.</div></td></tr>'; return; }
+  tbody.innerHTML = rows.map(t => {
+    const e = DB.employees.find(x=>x.id===t.eid);
+    return `<tr>
+      <td>${e ? `<div class="emp-cell"><div class="avatar">${ini(e)}</div>${full(e)}</div>` : 'Unknown'}</td>
+      <td>${e ? catBadge(e.cat) : '—'}</td>
+      <td>${txBadge(t.type)}</td>
+      <td style="font-weight:600">${fmt(t.amount||t.principal||0)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.73rem">${t.date||t.month||''}</td>
+      <td>${statusBadge(t.status||'Paid')}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ─── EMPLOYEES ─── */
+function renderEmployees(search='', cat='') {
+  updateCounts();
+  const catF = cat || document.getElementById('emp-cat-filter')?.value || '';
+  let list = DB.employees.filter(e => {
+    const matchS = !search || full(e).toLowerCase().includes(search.toLowerCase()) || (e.dept||'').toLowerCase().includes(search.toLowerCase());
+    const matchC = !catF || e.cat === catF;
+    return matchS && matchC;
+  });
+  const tbody = document.getElementById('emp-tbody');
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty">No employees found.</div></td></tr>'; return; }
+  tbody.innerHTML = list.map(e => `<tr>
+    <td><div class="emp-cell"><div class="avatar">${ini(e)}</div><div><div class="emp-name">${full(e)}</div><div class="emp-sub">${e.email||''}</div></div></div></td>
+    <td>${catBadge(e.cat)}</td>
+    <td style="color:var(--muted);font-size:0.76rem">${e.dept||'—'}</td>
+    <td style="font-weight:600">${fmt(e.salary)}</td>
+    <td>${statusBadge(e.status)}</td>
+    <td><div style="display:flex;gap:5px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-xs" onclick="viewEmp('${e.id}')">View</button>
+      <button class="btn btn-ghost btn-xs" onclick="startEdit('${e.id}')">Edit</button>
+    </div></td>
+  </tr>`).join('');
+}
+function filterEmp(val) { renderEmployees(val); }
+
+/* ─── EMPLOYEE DETAIL ─── */
+function viewEmp(id) {
+  currentEmpId = id;
+  showView('emp-detail');
+}
+function renderDetail(id) {
+  const e = DB.employees.find(x=>x.id===id);
+  if (!e) return;
+  document.getElementById('det-avatar').textContent = ini(e);
+  document.getElementById('det-name').textContent   = full(e);
+  document.getElementById('det-role').textContent   = e.cat + (e.dept ? ' · ' + e.dept : '');
+  document.getElementById('det-info').innerHTML = `
+    <div class="info-row"><span class="info-key">Phone</span><span class="info-val">${e.phone||'—'}</span></div>
+    <div class="info-row"><span class="info-key">Email</span><span class="info-val">${e.email||'—'}</span></div>
+    <div class="info-row"><span class="info-key">National ID</span><span class="info-val">${e.nid||'—'}</span></div>
+    <div class="info-row"><span class="info-key">Employed</span><span class="info-val">${e.edate||'—'}</span></div>
+    <div class="info-row"><span class="info-key">Salary</span><span class="info-val">${fmt(e.salary)}</span></div>
+    <div class="info-row"><span class="info-key">Status</span><span class="info-val">${statusBadge(e.status)}</span></div>
+  `;
+
+  const myTx = DB.transactions.filter(t=>t.eid===id);
+  const salTotal  = myTx.filter(t=>t.type==='salary').reduce((s,t)=>s+Number(t.amount||0),0);
+  const advTotal  = myTx.filter(t=>t.type==='advance').reduce((s,t)=>s+Number(t.amount||0),0);
+  const loanBal   = myTx.filter(t=>t.type==='loan'&&t.status!=='Paid').reduce((s,t)=>s+Number(t.balance||0),0);
+  document.getElementById('sum-sal').textContent  = fmt(salTotal);
+  document.getElementById('sum-adv').textContent  = fmt(advTotal);
+  document.getElementById('sum-loan').textContent = fmt(loanBal);
+
+  // Salary tab
+  const salRows = myTx.filter(t=>t.type==='salary').reverse();
+  document.getElementById('det-sal-tbody').innerHTML = salRows.length
+    ? salRows.map(t=>`<tr>
+        <td style="font-family:'JetBrains Mono',monospace">${t.month||''}</td>
+        <td style="font-weight:600;color:var(--green)">${fmt(t.amount)}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem">${t.date||''}</td>
+        <td style="color:var(--muted)">${t.note||''}</td>
+        <td><button class="btn btn-danger btn-xs" onclick="delTx('${t.id}')">Del</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="5"><div class="empty">No salary records</div></td></tr>';
+
+  // Advance tab
+  const advRows = myTx.filter(t=>t.type==='advance').reverse();
+  document.getElementById('det-adv-tbody').innerHTML = advRows.length
+    ? advRows.map(t=>`<tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem">${t.date||''}</td>
+        <td style="font-weight:600;color:var(--blue)">${fmt(t.amount)}</td>
+        <td style="color:var(--muted)">${t.reason||''}</td>
+        <td>${statusBadge(t.status)}</td>
+        <td><div style="display:flex;gap:4px">
+          ${t.status==='Pending'?`<button class="btn btn-ghost btn-xs" onclick="markAdv('${t.id}')">✓</button>`:''}
+          <button class="btn btn-danger btn-xs" onclick="delTx('${t.id}')">Del</button>
+        </div></td>
+      </tr>`).join('')
+    : '<tr><td colspan="5"><div class="empty">No advances</div></td></tr>';
+
+  // Loan tab
+  const loanRows = myTx.filter(t=>t.type==='loan').reverse();
+  document.getElementById('det-loan-tbody').innerHTML = loanRows.length
+    ? loanRows.map(t=>`<tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem">${t.date||''}</td>
+        <td style="font-weight:600">${fmt(t.principal)}</td>
+        <td style="font-weight:600;color:var(--red)">${fmt(t.balance)}</td>
+        <td>${statusBadge(t.status)}</td>
+        <td><div style="display:flex;gap:4px">
+          ${t.status==='Active'?`<button class="btn btn-ghost btn-xs" onclick="markLoan('${t.id}')">✓ Paid</button>`:''}
+          <button class="btn btn-danger btn-xs" onclick="delTx('${t.id}')">Del</button>
+        </div></td>
+      </tr>`).join('')
+    : '<tr><td colspan="5"><div class="empty">No loans</div></td></tr>';
+}
+function editCurrent()   { startEdit(currentEmpId); }
+function deleteCurrent() {
+  if (!confirm('Remove this employee and all their records?')) return;
+  DB.employees    = DB.employees.filter(x=>x.id!==currentEmpId);
+  DB.transactions = DB.transactions.filter(x=>x.eid!==currentEmpId);
+  saveDB(); toast('Employee removed'); showView('employees');
+}
+
+/* ─── SALARIES ─── */
+function renderSalaries(search='') {
+  const rows = DB.transactions.filter(t=>t.type==='salary').reverse()
+    .filter(t => { if (!search) return true; const e=DB.employees.find(x=>x.id===t.eid); return e && full(e).toLowerCase().includes(search.toLowerCase()); });
+  const tbody = document.getElementById('sal-tbody');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty">No salary records.</div></td></tr>'; return; }
+  tbody.innerHTML = rows.map(t => {
+    const e = DB.employees.find(x=>x.id===t.eid);
+    return `<tr>
+      <td>${e?`<div class="emp-cell"><div class="avatar">${ini(e)}</div>${full(e)}</div>`:'Unknown'}</td>
+      <td>${e?catBadge(e.cat):'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace">${t.month||''}</td>
+      <td style="font-weight:600;color:var(--green)">${fmt(t.amount)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem">${t.date||''}</td>
+      <td style="color:var(--muted)">${t.note||''}</td>
+      <td><button class="btn btn-danger btn-xs" onclick="delTx('${t.id}')">Del</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ─── ADVANCES ─── */
+function renderAdvances(search='') {
+  const rows = DB.transactions.filter(t=>t.type==='advance').reverse()
+    .filter(t => { if (!search) return true; const e=DB.employees.find(x=>x.id===t.eid); return e && full(e).toLowerCase().includes(search.toLowerCase()); });
+  const tbody = document.getElementById('adv-tbody');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty">No advance records.</div></td></tr>'; return; }
+  tbody.innerHTML = rows.map(t => {
+    const e = DB.employees.find(x=>x.id===t.eid);
+    return `<tr>
+      <td>${e?`<div class="emp-cell"><div class="avatar">${ini(e)}</div>${full(e)}</div>`:'Unknown'}</td>
+      <td>${e?catBadge(e.cat):'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem">${t.date||''}</td>
+      <td style="font-weight:600;color:var(--blue)">${fmt(t.amount)}</td>
+      <td style="color:var(--muted)">${t.reason||''}</td>
+      <td>${statusBadge(t.status)}</td>
+      <td><div style="display:flex;gap:4px">
+        ${t.status==='Pending'?`<button class="btn btn-ghost btn-xs" onclick="markAdv('${t.id}')">✓ Recovered</button>`:''}
+        <button class="btn btn-danger btn-xs" onclick="delTx('${t.id}')">Del</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ─── LOANS ─── */
+function renderLoans(search='') {
+  const rows = DB.transactions.filter(t=>t.type==='loan').reverse()
+    .filter(t => { if (!search) return true; const e=DB.employees.find(x=>x.id===t.eid); return e && full(e).toLowerCase().includes(search.toLowerCase()); });
+  const tbody = document.getElementById('loan-tbody');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty">No loan records.</div></td></tr>'; return; }
+  tbody.innerHTML = rows.map(t => {
+    const e = DB.employees.find(x=>x.id===t.eid);
+    return `<tr>
+      <td>${e?`<div class="emp-cell"><div class="avatar">${ini(e)}</div>${full(e)}</div>`:'Unknown'}</td>
+      <td>${e?catBadge(e.cat):'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem">${t.date||''}</td>
+      <td style="font-weight:600">${fmt(t.principal)}</td>
+      <td style="font-weight:600;color:var(--red)">${fmt(t.balance)}</td>
+      <td>${statusBadge(t.status)}</td>
+      <td><div style="display:flex;gap:4px">
+        ${t.status==='Active'?`<button class="btn btn-ghost btn-xs" onclick="markLoan('${t.id}')">✓ Paid</button>`:''}
+        <button class="btn btn-danger btn-xs" onclick="delTx('${t.id}')">Del</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ─── ALL TRANSACTIONS ─── */
+function renderAllTx(search='') {
+  let rows = [...DB.transactions].reverse()
+    .filter(t => { if (!search) return true; const e=DB.employees.find(x=>x.id===t.eid); return (e&&full(e).toLowerCase().includes(search.toLowerCase()))||t.type.includes(search.toLowerCase()); });
+  const tbody = document.getElementById('all-tbody');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty">No transactions.</div></td></tr>'; return; }
+  tbody.innerHTML = rows.map(t => {
+    const e = DB.employees.find(x=>x.id===t.eid);
+    return `<tr>
+      <td>${e?`<div class="emp-cell"><div class="avatar">${ini(e)}</div>${full(e)}</div>`:'Unknown'}</td>
+      <td>${e?catBadge(e.cat):'—'}</td>
+      <td>${txBadge(t.type)}</td>
+      <td style="font-weight:600">${fmt(t.amount||t.principal||0)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem">${t.date||t.month||''}</td>
+      <td style="color:var(--muted)">${t.note||t.reason||''}</td>
+      <td>${statusBadge(t.status||'Paid')}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ─── TABS ─── */
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const map = {'dtab-salary':0,'dtab-advances':1,'dtab-loans':2};
+  document.querySelectorAll('.tab')[map[id]]?.classList.add('active');
+}
+
+/* ─── EMPLOYEE CRUD ─── */
+function openEmpModal() {
+  editingEmpId = null;
+  document.getElementById('empModalTtl').textContent = 'Add Employee';
+  ['fn','ln','dept','sal','phone','email','nid'].forEach(f => document.getElementById('f-'+f).value='');
+  document.getElementById('f-cat').value = '';
+  document.getElementById('f-status').value = 'Active';
+  document.getElementById('f-date').value = today();
+  openModal('empModal');
+}
+function startEdit(id) {
+  editingEmpId = id;
+  const e = DB.employees.find(x=>x.id===id);
+  document.getElementById('empModalTtl').textContent = 'Edit Employee';
+  document.getElementById('f-fn').value     = e.fn;
+  document.getElementById('f-ln').value     = e.ln;
+  document.getElementById('f-cat').value    = e.cat;
+  document.getElementById('f-dept').value   = e.dept||'';
+  document.getElementById('f-sal').value    = e.salary;
+  document.getElementById('f-date').value   = e.edate||'';
+  document.getElementById('f-phone').value  = e.phone||'';
+  document.getElementById('f-email').value  = e.email||'';
+  document.getElementById('f-nid').value    = e.nid||'';
+  document.getElementById('f-status').value = e.status;
+  openModal('empModal');
+}
+function saveEmployee() {
+  const fn  = document.getElementById('f-fn').value.trim();
+  const ln  = document.getElementById('f-ln').value.trim();
+  const cat = document.getElementById('f-cat').value;
+  const sal = document.getElementById('f-sal').value;
+  if (!fn||!ln||!cat||!sal) { toast('Please fill all required fields (*)', true); return; }
+
+  const data = {
+    fn, ln, cat,
+    dept:   document.getElementById('f-dept').value.trim(),
+    salary: Number(sal),
+    edate:  document.getElementById('f-date').value,
+    phone:  document.getElementById('f-phone').value.trim(),
+    email:  document.getElementById('f-email').value.trim(),
+    nid:    document.getElementById('f-nid').value.trim(),
+    status: document.getElementById('f-status').value,
+  };
+
+  if (editingEmpId) {
+    const i = DB.employees.findIndex(x=>x.id===editingEmpId);
+    DB.employees[i] = { ...DB.employees[i], ...data };
+    toast('Employee updated ✓');
+  } else {
+    data.id = uid();
+    DB.employees.push(data);
+    toast('Employee added ✓');
+  }
+  saveDB(); closeModal('empModal'); renderView(curView());
+}
+
+/* ─── TRANSACTION MODAL ─── */
+function openTxModal(type, fromDetail) {
+  curTxType  = type;
+  txEmpPreset = fromDetail ? currentEmpId : null;
+
+  const titles = { salary:'Record Salary Payment', advance:'Record Advance', loan:'Add Loan' };
+  document.getElementById('txModalTtl').textContent = titles[type];
+
+  document.getElementById('tx-salary').style.display  = type==='salary'  ? '' : 'none';
+  document.getElementById('tx-advance').style.display = type==='advance' ? '' : 'none';
+  document.getElementById('tx-loan').style.display    = type==='loan'    ? '' : 'none';
+  document.getElementById('tx-emp-grp').style.display = fromDetail       ? 'none' : '';
+
+  // Populate employee dropdown
+  const sel = document.getElementById('f-tx-emp');
+  sel.innerHTML = DB.employees.map(e=>`<option value="${e.id}">${full(e)} (${e.cat})</option>`).join('');
+  if (txEmpPreset) sel.value = txEmpPreset;
+
+  // Default values
+  if (type==='salary')  { document.getElementById('f-sal-month').value = nowM(); document.getElementById('f-sal-amt').value=''; document.getElementById('f-sal-note').value=''; }
+  if (type==='advance') { document.getElementById('f-adv-date').value = today(); document.getElementById('f-adv-amt').value=''; document.getElementById('f-adv-reason').value=''; document.getElementById('f-adv-status').value='Pending'; }
+  if (type==='loan')    { document.getElementById('f-loan-date').value = today(); document.getElementById('f-loan-principal').value=''; document.getElementById('f-loan-balance').value=''; document.getElementById('f-loan-status').value='Active'; document.getElementById('f-loan-note').value=''; }
+
+  openModal('txModal');
+}
+function saveTx() {
+  const eid = txEmpPreset || document.getElementById('f-tx-emp').value;
+  if (!eid) { toast('Select an employee', true); return; }
+  let tx = { id: uid(), eid, type: curTxType };
+
+  if (curTxType==='salary') {
+    const amt   = document.getElementById('f-sal-amt').value;
+    const month = document.getElementById('f-sal-month').value;
+    if (!amt||!month) { toast('Fill required fields', true); return; }
+    tx.amount = Number(amt); tx.month = month; tx.date = today();
+    tx.note   = document.getElementById('f-sal-note').value; tx.status = 'Paid';
+  } else if (curTxType==='advance') {
+    const amt  = document.getElementById('f-adv-amt').value;
+    const date = document.getElementById('f-adv-date').value;
+    if (!amt||!date) { toast('Fill required fields', true); return; }
+    tx.amount = Number(amt); tx.date = date;
+    tx.reason = document.getElementById('f-adv-reason').value;
+    tx.status = document.getElementById('f-adv-status').value;
+  } else if (curTxType==='loan') {
+    const principal = document.getElementById('f-loan-principal').value;
+    const date      = document.getElementById('f-loan-date').value;
+    if (!principal||!date) { toast('Fill required fields', true); return; }
+    const balance = document.getElementById('f-loan-balance').value || principal;
+    tx.principal = Number(principal); tx.balance = Number(balance);
+    tx.amount    = Number(principal); tx.date    = date;
+    tx.status    = document.getElementById('f-loan-status').value;
+    tx.note      = document.getElementById('f-loan-note').value;
+  }
+
+  DB.transactions.push(tx);
+  saveDB(); closeModal('txModal'); toast('Transaction saved ✓');
+  renderView(curView());
+}
+
+/* ─── QUICK ACTIONS ─── */
+function delTx(id) {
+  if (!confirm('Delete this record?')) return;
+  DB.transactions = DB.transactions.filter(x=>x.id!==id);
+  saveDB(); toast('Deleted'); renderView(curView());
+}
+function markAdv(id) {
+  const t = DB.transactions.find(x=>x.id===id);
+  if (t) { t.status='Recovered'; saveDB(); toast('Marked as recovered ✓'); renderView(curView()); }
+}
+function markLoan(id) {
+  const t = DB.transactions.find(x=>x.id===id);
+  if (t) { t.status='Paid'; t.balance=0; saveDB(); toast('Loan marked as paid ✓'); renderView(curView()); }
+}
+
+/* ─── MODALS ─── */
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('open'); }));
+
+/* ─── TOAST ─── */
+function toast(msg, err=false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className   = 'toast ' + (err ? 'err' : 'ok');
+  el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.style.display='none', 2800);
+}
+
+/* ─── DATE CHIP ─── */
+document.getElementById('dateChip').textContent = new Date().toLocaleDateString('en-KE',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+
+/* ─── INIT ─── */
+loadDB().then(() => showView('dashboard'));
+</script>
+</body>
+</html>
